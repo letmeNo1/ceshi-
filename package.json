@@ -1,0 +1,28 @@
+{
+  "name": "get-window-rect-by-pid",
+  "version": "1.0.3",
+  "description": "通过PID返回窗口坐标",
+  "main": "index.js",
+  "dependencies": {
+    "bindings": "1.5.0",
+    "node-addon-api": "3.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/letmeNo1/get-window-rect-for-mac.git"
+  },
+  "keywords": [
+    "mac",
+    "rect"
+  ],
+  "author": "hank.huang",
+  "bugs": {
+    "url": "https://github.com/letmeNo1/get-window-rect-for-mac/issues"
+  },
+  "homepage": "https://github.com/letmeNo1/get-window-rect-for-mac",
+  "scripts": {
+    "install": "node-gyp rebuild"
+  },
+  "gypfile": true,
+  "license": "ISC"
+}
