@@ -10,6 +10,11 @@ Napi::Value getWindowRect(const Napi::CallbackInfo& info) {
   // 接收参数
     double arg0 = info[0].As<Napi::Number>().DoubleValue();
 
+    std::string baseImageOutput = "file:///Users/hank.huang/Desktop";
+    std::string pathSeparator = "/";
+    std::string baseImageName = "image-";
+    std::string imageExtension = ".png";
+
     CGDisplayErr      dErr;
     CGDisplayCount    displayCount, i;
     CGDirectDisplayID onlineDisplays[ MAX_DISPLAYS ];
@@ -20,10 +25,28 @@ Napi::Value getWindowRect(const Napi::CallbackInfo& info) {
             exit(1);
     }
     for (i = 0; i < displayCount; i++) {
-            CGDirectDisplayID dID = onlineDisplays[i];
-            CGImageRef cgRef = CGDisplayCreateImage(dID);
-            UIImage* image = [UIImage imageWithCGImage: cgRef];
+            std::string imagePath = baseImageOutput + pathSeparator + baseImageName + std::to_string(i) + imageExtension;
+            const char *charPath = imagePath.c_str();
 
+            CFStringRef imageOutputPath = CFStringCreateWithCString(kCFAllocatorDefault, charPath, kCFURLPOSIXPathStyle);
+
+            CGDirectDisplayID dID = onlineDisplays[i];
+            CGImageRef image = CGDisplayCreateImage(dID);
+            CFURLRef url = CFURLCreateWithString(kCFAllocatorDefault, imageOutputPath, NULL);
+            CGImageDestinationRef destination = CGImageDestinationCreateWithURL(url, kUTTypePNG, 1, NULL);
+            if (!destination) {
+            std::cout<< "The destination does not exist: " << imagePath << std::endl;
+            CGImageRelease(image);
+        }
+            CGImageDestinationAddImage(destination, image, NULL);
+            if (!CGImageDestinationFinalize(destination)) {
+            std::cout << "Failed to write image to the path" << std::endl;;
+            CFRelease(destination);
+            CGImageRelease(image);
+        }
+            CFRelease(destination);
+            CGImageRelease(image);    
+            // UIImage* image = [UIImage imageWithCGImage: cgRef];
             printf("%-16p", dID);
            
     }
